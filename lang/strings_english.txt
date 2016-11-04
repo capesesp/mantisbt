@@ -1627,6 +1627,10 @@ $s_timeline_no_activity = 'No activity within time range.';
 $s_timeline_title = 'Timeline';
 $s_timeline_more = 'More events...';
 
+$s_welcome_to_mantis = 'Welcome to new Mantis';
+$s_made_with_love = 'Made with <span class="glyphicon glyphicon-heart"></span> for Capesesp.';
+$s_know_more = 'Know more';
+
 /**
  * ERROR strings
  */
