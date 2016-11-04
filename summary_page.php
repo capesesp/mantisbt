@@ -190,20 +190,6 @@ print_summary_submenu();
 	</table>
 	</div>
 
-	<!-- BY CATEGORY -->
-	<div class="space-10"></div>
-	<div class="widget-box table-responsive">
-		<table class="table table-hover table-bordered table-condensed table-striped">
-		<thead>
-			<tr>
-				<th class="width-35"><?php echo lang_get( 'by_category' ) ?></th>
-				<?php echo $t_orcttab ?>
-			</tr>
-		</thead>
-		<?php summary_print_by_category() ?>
-	</table>
-	</div>
-
 	<!-- TIME STATS -->
 	<div class="space-10"></div>
 	<div class="widget-box table-responsive">
@@ -236,39 +222,10 @@ print_summary_submenu();
 	</table>
 	</div>
 
-	<!-- DEVELOPER STATS -->
-	<div class="space-10"></div>
-	<div class="widget-box table-responsive">
-		<table class="table table-hover table-bordered table-condensed table-striped">
-		<thead>
-			<tr>
-				<th><?php echo lang_get( 'developer_stats' ) ?></th>
-				<?php echo $t_orcttab ?>
-			</tr>
-		</thead>
-		<?php summary_print_by_developer() ?>
-	</table>
-</div>
 </div>
 
 <!-- RIGHT COLUMN -->
 <div class="col-md-6 col-xs-12">
-
-	<!-- DEVELOPER STATS -->
-	<div class="space-10"></div>
-	<div class="widget-box table-responsive">
-		<table class="table table-hover table-bordered table-condensed table-striped">
-		<thead>
-			<tr>
-				<th class="width-35"><?php echo lang_get( 'by_date' ) ?></th>
-				<th class="align-right"><?php echo lang_get( 'opened' ); ?></th>
-				<th class="align-right"><?php echo lang_get( 'resolved' ); ?></th>
-				<th class="align-right"><?php echo lang_get( 'balance' ); ?></th>
-			</tr>
-		</thead>
-		<?php summary_print_by_date( config_get( 'date_partitions' ) ) ?>
-	</table>
-	</div>
 
 	<!-- MOST ACTIVE -->
 	<div class="space-10"></div>
@@ -326,84 +283,11 @@ print_summary_submenu();
 	</table>
 	</div>
 
-	<!-- REPORTER STATS -->
-	<div class="space-10"></div>
-	<div class="widget-box table-responsive">
-		<table class="table table-hover table-bordered table-condensed table-striped">
-		<thead>
-			<tr>
-				<th class="width-35"><?php echo lang_get( 'reporter_stats' ) ?></th>
-				<?php echo $t_orcttab ?>
-			</tr>
-		</thead>
-		<?php summary_print_by_reporter() ?>
-	</table>
-	</div>
-
-	<!-- REPORTER EFFECTIVENESS -->
-	<div class="space-10"></div>
-	<div class="widget-box table-responsive">
-		<table class="table table-hover table-bordered table-condensed table-striped">
-		<thead>
-			<tr>
-				<th class="width-35"><?php echo lang_get( 'reporter_effectiveness' ) ?></th>
-				<th class="align-right"><?php echo lang_get( 'severity' ); ?></th>
-				<th class="align-right"><?php echo lang_get( 'errors' ); ?></th>
-				<th class="align-right"><?php echo lang_get( 'total' ); ?></th>
-			</tr>
-		</thead>
-		<?php summary_print_reporter_effectiveness( config_get( 'severity_enum_string' ), config_get( 'resolution_enum_string' ) ) ?>
-	</table>
-	</div>
 
 </div>
 
 <!-- BOTTOM -->
 <div class="col-md-12 col-xs-12">
-
-	<!-- REPORTER BY RESOLUTION -->
-	<div class="space-10"></div>
-	<div class="widget-box table-responsive">
-		<table class="table table-hover table-bordered table-condensed table-striped">
-		<thead>
-			<tr>
-				<th class="width-15"><?php echo lang_get( 'reporter_by_resolution' ) ?></th>
-				<?php
-					$t_resolutions = MantisEnum::getValues( config_get( 'resolution_enum_string' ) );
-
-					foreach ( $t_resolutions as $t_resolution ) {
-						echo '<th class="align-right">', get_enum_element( 'resolution', $t_resolution ), "</th>\n";
-					}
-
-					echo '<th class="align-right">', lang_get( 'percentage_errors' ), "</th>\n";
-				?>
-			</tr>
-		</thead>
-		<?php summary_print_reporter_resolution( config_get( 'resolution_enum_string' ) ) ?>
-	</table>
-	</div>
-
-	<!-- DEVELOPER BY RESOLUTION -->
-	<div class="space-10"></div>
-	<div class="widget-box table-responsive">
-		<table class="table table-hover table-bordered table-condensed table-striped">
-		<thead>
-			<tr>
-				<th class="width-15"><?php echo lang_get( 'developer_by_resolution' ) ?></th>
-				<?php
-					$t_resolutions = MantisEnum::getValues( config_get( 'resolution_enum_string' ) );
-
-					foreach ( $t_resolutions as $t_resolution ) {
-						echo '<th class="align-right">', get_enum_element( 'resolution', $t_resolution ), "</th>\n";
-					}
-
-					echo '<th class="align-right">', lang_get( 'percentage_fixed' ), "</th>\n";
-				?>
-			</tr>
-		</thead>
-		<?php summary_print_developer_resolution( config_get( 'resolution_enum_string' ) ) ?>
-	</table>
-	</div>
 
 </div>
 
