@@ -132,7 +132,7 @@ layout_login_page_begin();
 		<div class="space-12 hidden-480"></div>
 		<a href="<?php echo config_get( 'logo_url' ) ?>">
 			<h1 class="center white">
-				<img src="<?php echo helper_mantis_url( config_get( 'logo_image' ) ); ?>">
+				<img src="<?php echo helper_mantis_url( config_get( 'logo_image' ) ); ?>" class="img-responsive center-block" >
 			</h1>
 		</a>
 		<div class="space-24 hidden-480"></div>
@@ -222,6 +222,9 @@ if( config_get_global( 'admin_checks' ) == ON && file_exists( dirname( __FILE__ 
 	<div class="signup-box visible widget-box no-border" id="login-box">
 		<div class="widget-body">
 			<div class="widget-main">
+				<h2>
+					<?php echo lang_get( 'welcome_to_mantis' ) ?>
+				</h2>
 				<h4 class="header lighter bigger">
 					<i class="ace-icon fa fa-sign-in"></i>
 					<?php echo lang_get( 'login_title' ) ?>
@@ -311,8 +314,8 @@ if( count( $t_warnings ) > 0 ) {
 ?>
 </div>
 
+<!-- anonymous login and sign up disabled
 <div class="toolbar center">
-
 <?php
 if( ON == config_get( 'allow_anonymous_login' ) ) {
 	echo '<a class="back-to-login-link pull-right" href="login_anon.php?return=' . string_url( $f_return ) . '">' . lang_get( 'login_anonymously' ) . '</a>';
@@ -327,6 +330,8 @@ if( ( ON == config_get_global( 'allow_signup' ) ) &&
 ?>
 <div class="clearfix"></div>
 </div>
+-->
+
 </div>
 </div>
 </div>
