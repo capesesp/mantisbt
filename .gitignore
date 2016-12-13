@@ -46,3 +46,7 @@ web.config
 #libraries
 library/FirePHPCore
 library/ezc
+
+# other
+upload/
+log/
