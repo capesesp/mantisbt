@@ -21,7 +21,7 @@
 /**
  * Mantis Version
  */
-define( 'MANTIS_VERSION', '2.0.0-beta.3' );
+define( 'MANTIS_VERSION', '2.0.0-rc.2' );
 define( 'FILTER_VERSION', 'v9' );
 
 # --- constants -------------------
@@ -41,9 +41,10 @@ define( 'PHP_CGI', 1 );
 # installation
 define( 'CONFIGURED_PASSWORD', '______' );
 define( 'DB_MIN_VERSION_ADODB', '5.20.2' );  # For mssql, oracle and pgsql
-define( 'DB_MIN_VERSION_MSSQL', '9.0.0' );
-define( 'DB_MIN_VERSION_MYSQL', '5.0.8' );   # See #16584
-define( 'DB_MIN_VERSION_PGSQL', '9.0' );     # Earliest supported version as of August 2014
+define( 'DB_MIN_VERSION_MSSQL', '11.0.0' );  # MS SQL Server 2012
+define( 'DB_MIN_VERSION_MYSQL', '5.5.35' );  # See #20431
+define( 'DB_MIN_VERSION_PGSQL', '9.2' );     # Earliest supported version as of Nov 2016
+define( 'DB_MIN_VERSION_ORACLE', '11.2' );
 
 # error types
 define( 'ERROR', E_USER_ERROR );
@@ -497,14 +498,12 @@ define( 'TOKEN_ACCOUNT_VERIFY', 6 );
 define( 'TOKEN_ACCOUNT_ACTIVATION', 7 );
 define( 'TOKEN_USER', 1000 );
 
-# token expirations
+# Token expiry durations (in seconds)
 define( 'TOKEN_EXPIRY', 60 * 60 );
-
-# Default expiration of 60 minutes ( 3600 seconds )
 define( 'TOKEN_EXPIRY_LAST_VISITED', 24 * 60 * 60 );
 define( 'TOKEN_EXPIRY_AUTHENTICATED', 5 * 60 );
 define( 'TOKEN_EXPIRY_COLLAPSE', 365 * 24 * 60 * 60 );
-define( 'TOKEN_EXPIRY_ACCOUNT_ACTIVATION', 24 * 60 * 60 );
+define( 'TOKEN_EXPIRY_ACCOUNT_ACTIVATION', 7 * 24 * 60 * 60 );
 
 # config types
 define( 'CONFIG_TYPE_DEFAULT', 0 );
