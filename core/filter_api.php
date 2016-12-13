@@ -862,6 +862,9 @@ function filter_deserialize( $p_serialized_filter ) {
 	$t_filter_array = array();
 	if( isset( $t_setting_arr[1] ) ) {
 		$t_filter_array = json_decode( $t_setting_arr[1], true );
+                if ( is_null ($t_filter_array)){
+                       $t_filter_array = unserialize($t_setting_arr[1]);
+                }
 	} else {
 		return false;
 	}
