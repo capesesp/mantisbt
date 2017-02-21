@@ -68,8 +68,8 @@ $g_database_name		= 'bugtracker';
  *
  * RDBMS           db_type       PHP ext   Comments
  * -----           -------       -------   --------
- * MySQL           mysql         mysql
- *                 mysqli        mysqli    default
+ * MySQL           mysqli        mysqli    default
+ *                 mysql         mysql     PHP < 5.5.0 only
  * PostgreSQL      pgsql         pgsql
  * MS SQL Server   mssqlnative   sqlsrv    experimental
  * Oracle          oci8          oci8      experimental
@@ -90,6 +90,38 @@ $g_db_type				= 'mysqli';
  * NOTE: the installer does not yet fully support the use of dsn's
  */
 $g_dsn = '';
+
+/**
+ * Database Table prefix.
+ * The given string is added with an underscore before the base table name,
+ * e.g. 'bug' => 'mantis_bug'.
+ * To avoid the 30-char limit on identifiers in Oracle (< 12cR2), the prefix
+ * should be set to blank or kept as short as possible (e.g. 'm')
+ * @global string $g_db_table_prefix
+ */
+$g_db_table_prefix = 'mantis';
+
+/**
+ * Database Table suffix.
+ * The given string is added with an underscore after the base table name,
+ * e.g. 'bug' => 'bug_table'.
+ * @see $g_db_table_prefix for size limitation recommendation
+ * @global string $g_db_table_suffix
+ */
+$g_db_table_suffix = '_table';
+
+/**
+ * Plugin Table prefix.
+ * The given string is added with an underscore between the table prefix and
+ * the base table name, and the plugin basename is added after that
+ * e.g. 'Example' plugin's table 'foo' => 'mantis_plugin_Example_foo_table'.
+ * To avoid the 30-char limit on identifiers in Oracle (< 12cR2), the prefix
+ * should be kept as short as possible (e.g. 'plg'); it is however strongly
+ * recomended not to use an empty string here.
+ * @see $g_db_table_prefix
+ * @global string $g_db_table_prefix
+ */
+$g_db_table_plugin_prefix	= 'plugin';
 
 ####################
 # Folder Locations #
@@ -428,7 +460,7 @@ $g_enable_email_notification	= ON;
  *
  * @global integer $g_email_notifications_verbose
  */
-$g_email_notifications_verbose = ON;
+$g_email_notifications_verbose = OFF;
 
 /**
  * The following two config options allow you to control who should get email
@@ -1116,44 +1148,37 @@ $g_long_process_timeout = 0;
 ##########################
 
 /**
- * date format strings defaults to ISO 8601 formatting
- * go to http://www.php.net/manual/en/function.date.php
- * for detailed instructions on date formatting
+ * Date format strings defaults to ISO 8601 formatting.
+ * For detailed instructions on date formatting
+ * @see http://www.php.net/manual/en/function.date.php
  * @global string $g_short_date_format
  */
 $g_short_date_format = 'Y-m-d';
 
 /**
- * date format strings defaults to ISO 8601 formatting
- * go to http://www.php.net/manual/en/function.date.php
- * for detailed instructions on date formatting
+ * Date format strings defaults to ISO 8601 formatting.
+ * For detailed instructions on date formatting
+ * @see http://www.php.net/manual/en/function.date.php
  * @global string $g_normal_date_format
  */
 $g_normal_date_format = 'Y-m-d H:i';
 
 /**
- * date format strings defaults to ISO 8601 formatting
- * go to http://www.php.net/manual/en/function.date.php
- * for detailed instructions on date formatting
+ * Date format strings defaults to ISO 8601 formatting.
+ * For detailed instructions on date formatting
+ * @see http://www.php.net/manual/en/function.date.php
  * @global string $g_complete_date_format
  */
 $g_complete_date_format = 'Y-m-d H:i T';
 
 /**
- * jscalendar date format string
- * go to http://www.php.net/manual/en/function.date.php
- * for detailed instructions on date formatting
- * @global string $g_calendar_js_date_format
+ * Datetime picker widget format string.
+ * For detailed instructions on date formatting
+ * @see http://momentjs.com/docs/#/displaying/format/
+ * @global string $g_datetime_picker_format
  */
-$g_calendar_js_date_format = '\%Y-\%m-\%d \%H:\%M';
+$g_datetime_picker_format = 'Y-MM-DD HH:mm';
 
-/**
- * jscalendar date format string
- * go to http://www.php.net/manual/en/function.date.php
- * for detailed instructions on date formatting
- * @global string $g_calendar_date_format
- */
-$g_calendar_date_format = 'Y-m-d H:i';
 
 ##############################
 # MantisBT TimeZone Settings #
@@ -2766,6 +2791,12 @@ $g_update_readonly_bug_threshold = MANAGER;
 $g_view_changelog_threshold = VIEWER;
 
 /**
+* threshold for viewing timeline
+* @global integer $g_timeline_view_threshold
+*/
+$g_timeline_view_threshold = VIEWER;
+
+/**
  * threshold for viewing roadmap
  * @global integer $g_roadmap_view_threshold
  */
@@ -3120,9 +3151,8 @@ $g_bug_list_cookie = '%cookie_prefix%_BUG_LIST_COOKIE';
 $g_filter_by_custom_fields = ON;
 
 /**
- * The number of custom fields to display per row.
- * The default is 8. The value should be greater than or equal to 8.
- * If lower, whitespace will appear on the right
+ * The number of filter fields to display per row.
+ * The default is 8.
  * @global integer $g_filter_custom_fields_per_row
  */
 $g_filter_custom_fields_per_row = 8;
@@ -3160,34 +3190,6 @@ $g_create_permalink_threshold = DEVELOPER;
  * @global string $g_create_short_url
  */
 $g_create_short_url = 'http://tinyurl.com/create.php?url=%s';
-
-#####################################
-# MantisBT Database Table Variables #
-#####################################
-
-/**
- * table prefix
- * To avoid the 30-char limit on identifiers in Oracle, the prefix
- * should be set to blank or kept as short as possible (e.g. 'm')
- * @global string $g_db_table_prefix
- */
-$g_db_table_prefix = 'mantis';
-
-/**
- * plugin table prefix
- * To avoid the 30-char limit on identifiers in Oracle, the prefix
- * should be kept as short as possible (e.g. 'plg')
- * @global string $g_db_table_prefix
- */
-$g_db_table_plugin_prefix	= 'plugin';
-
-/**
- * table suffix
- * To avoid the 30-char limit on identifiers in Oracle, the suffix
- * should be set to blank or kept as short as possible
- * @global string $g_db_table_suffix
- */
-$g_db_table_suffix = '_table';
 
 #########################
 # MantisBT Enum Strings #
@@ -4276,8 +4278,6 @@ $g_public_config_names = array(
 	'bugnote_user_change_view_state_threshold',
 	'bugnote_user_delete_threshold',
 	'bugnote_user_edit_threshold',
-	'calendar_date_format',
-	'calendar_js_date_format',
 	'cdn_enabled',
 	'change_view_status_threshold',
 	'check_mx_record',
@@ -4295,6 +4295,7 @@ $g_public_config_names = array(
 	'custom_field_edit_after_create',
 	'custom_field_link_threshold',
 	'custom_field_type_enum_string',
+	'datetime_picker_format',
 	'default_bug_additional_info',
 	'default_bug_eta',
 	'default_bug_priority',
@@ -4526,6 +4527,7 @@ $g_public_config_names = array(
 	'time_tracking_view_threshold',
 	'time_tracking_with_billing',
 	'time_tracking_without_note',
+	'timeline_view_threshold',
 	'top_include_page',
 	'update_bug_assign_threshold',
 	'update_bug_status_threshold',

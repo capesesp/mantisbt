@@ -257,12 +257,18 @@ function layout_head_css() {
 
 		# theme text fonts
 		html_css_cdn_link( 'https://fonts.googleapis.com/css?family=Open+Sans:300,400' );
+
+		# datetimepicker
+		html_css_cdn_link( 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/' . DATETIME_PICKER_VERSION . '/css/bootstrap-datetimepicker.min.css' );
 	} else {
 		html_css_link( 'bootstrap-' . BOOTSTRAP_VERSION . '.min.css' );
 		html_css_link( 'font-awesome-' . FONT_AWESOME_VERSION . '.min.css' );
 
 		# theme text fonts
 		html_css_link( 'open-sans.css' );
+
+		# datetimepicker
+		html_css_link( 'bootstrap-datetimepicker-' . DATETIME_PICKER_VERSION . '.min.css' );
 	}
 
 	# page specific plugin styles
@@ -307,16 +313,35 @@ function layout_head_javascript() {
  * @return null
  */
 function layout_body_javascript() {
-	# bootstrap
 	if ( config_get_global( 'cdn_enabled' ) == ON ) {
+		# bootstrap
 		html_javascript_cdn_link( 'https://maxcdn.bootstrapcdn.com/bootstrap/' . BOOTSTRAP_VERSION . '/js/bootstrap.min.js', BOOTSTRAP_HASH );
+
+		# moment & datetimepicker
+		html_javascript_cdn_link( 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/' . MOMENT_VERSION . '/moment-with-locales.min.js', MOMENT_HASH );
+		html_javascript_cdn_link( 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/' . DATETIME_PICKER_VERSION . '/js/bootstrap-datetimepicker.min.js', DATETIME_PICKER_HASH );
+
+		# typeahead.js
+		html_javascript_cdn_link( 'https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/' . TYPEAHEAD_VERSION . '/typeahead.jquery.min.js', TYPEAHEAD_HASH );
+
+		# listjs
+		html_javascript_cdn_link( 'https://cdnjs.cloudflare.com/ajax/libs/list.js/' . LISTJS_VERSION . '/list.min.js', LISTJS_HASH );
 	} else {
+		# bootstrap
 		html_javascript_link( 'bootstrap-' . BOOTSTRAP_VERSION . '.min.js' );
+
+		# moment & datetimepicker
+		html_javascript_link( 'moment-with-locales-' . MOMENT_VERSION . '.min.js' );
+		html_javascript_link( 'bootstrap-datetimepicker-' . DATETIME_PICKER_VERSION . '.min.js' );
+
+		# typeahead.js
+		html_javascript_link( 'typeahead.jquery-' . TYPEAHEAD_VERSION . '.min.js' );
+
+		# listjs
+		html_javascript_link( 'list-' . LISTJS_VERSION . '.min.js' );
 	}
 
-	# theme scripts
-	html_javascript_link( 'ace-extra.min.js' );
-	html_javascript_link( 'ace-elements.min.js' );
+	# ace theme scripts
 	html_javascript_link( 'ace.min.js' );
 }
 
@@ -394,7 +419,7 @@ function layout_navbar() {
 	echo '<div class="navbar-header">';
 	echo '<a href="' . $t_logo_url . '" class="navbar-brand">';
 	echo '<span class="smaller-75"> ';
-	echo config_get('window_title');
+	echo string_display_line( config_get('window_title') );
 	echo ' </span>';
 	echo '</a>';
 
@@ -599,9 +624,16 @@ function layout_navbar_projects_list( $p_project_id = null, $p_include_all_proje
 		if( $p_project_id !== null ) {
 			check_selected( $p_project_id, ALL_PROJECTS, false );
 		}
-		echo '> ' . lang_get( 'all_projects' ) . ' </a></li>' . "\n";
+		echo '> ' . lang_get( 'all_projects' ) . ' </a></li>' . " \n";
 		echo '<li class="divider"></li>' . "\n";
 	}
+
+	echo '<li>';
+	echo '<div id="projects-list">';
+	echo '<div class="projects-searchbox">';
+	echo '<input class="search form-control input-md" placeholder="' . lang_get( 'search' ) . '" />';
+	echo '</div>';
+	echo '<ul class="list dropdown-yellow no-margin">';
 
 	foreach( $t_project_ids as $t_id ) {
 		if( $p_can_report_only ) {
@@ -613,9 +645,13 @@ function layout_navbar_projects_list( $p_project_id = null, $p_include_all_proje
 		echo '<a href="' . helper_mantis_url( 'set_project.php' ) . '?project_id=' . $t_id . '"';
 		check_selected( $p_project_id, $t_id, false );
 		check_disabled( $t_id == $p_filter_project_id || !$t_can_report );
-		echo '> ' . string_attribute( project_get_field( $t_id, 'name' ) ) . ' </a></li>' . "\n";
+		echo ' class="project-link"> ' . string_attribute( project_get_field( $t_id, 'name' ) ) . ' </a></li>' . "\n";
 		layout_navbar_subproject_option_list( $t_id, $p_project_id, $p_filter_project_id, $p_trace, $p_can_report_only );
 	}
+
+	echo '</ul>';
+	echo '</div>';
+	echo '</li>';
 }
 
 /**
@@ -651,7 +687,7 @@ function layout_navbar_subproject_option_list( $p_parent_id, $p_project_id = nul
 		echo '<a href="' . helper_mantis_url( 'set_project.php' ) . '?project_id=' . $t_full_id . '"';
 		check_selected( $p_project_id, $t_full_id, false );
 		check_disabled( $t_id == $p_filter_project_id || !$t_can_report );
-		echo '> ' . str_repeat( '&#160;', count( $p_parents ) * 4 );
+		echo ' class="project-link"> ' . str_repeat( '&#160;', count( $p_parents ) * 4 );
 		echo string_attribute( project_get_field( $t_id, 'name' ) ) . '</a></li>' . "\n";
 
 		layout_navbar_subproject_option_list( $t_id, $p_project_id, $p_filter_project_id, $p_trace, $p_can_report_only, $p_parents );
@@ -1089,7 +1125,7 @@ function layout_footer() {
 	}
 	echo '<div class="col-md-6 col-xs-12 no-padding">' . "\n";
 	echo '<address>' . "\n";
-	echo '<strong>Powered by <a href="http://www.mantisbt.org" title="bug tracking software">MantisBT ' . $t_version_suffix . '</a></strong> <br>' . "\n";
+	echo '<strong>Powered by <a href="https://www.mantisbt.org" title="bug tracking software">MantisBT ' . $t_version_suffix . '</a></strong> <br>' . "\n";
 	echo "<small>Copyright &copy;$t_copyright_years MantisBT Team</small>" . '<br>';
 
 	# Show optional user-specified custom copyright statement
@@ -1114,7 +1150,7 @@ function layout_footer() {
 		echo '<div class="col-md-6 col-xs-12">' . "\n";
 		echo '<div class="pull-right" id="powered-by-mantisbt-logo">' . "\n";
 		$t_mantisbt_logo_url = helper_mantis_url( 'images/mantis_logo.png' );
-		echo '<a href="http://www.mantisbt.org" '.
+		echo '<a href="https://www.mantisbt.org" '.
 			'title="Mantis Bug Tracker: a free and open source web based bug tracking system.">' .
 			'<img src="' . $t_mantisbt_logo_url . '" width="102" height="35" ' .
 			'alt="Powered by Mantis Bug Tracker: a free and open source web based bug tracking system." />' .

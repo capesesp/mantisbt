@@ -48,6 +48,14 @@ $(document).ready( function() {
         ToggleDiv( t_div );
     });
 
+    var options = {
+    	valueNames: [ 'project-link' ]
+    };
+    var list = new List('projects-list', options);
+    if(list.items.length <= 10) {
+    	$('#projects-list .searchbox').hide();
+    }
+
     $('.widget-box').on('shown.ace.widget' , function(event) {
        var t_id = $(this).attr('id');
        var t_cookie = GetCookie( "collapse_settings" );
@@ -89,34 +97,42 @@ $(document).ready( function() {
         SetCookie("collapse_settings", t_cookie);
     });
 
-    $('input[type=text].autocomplete').autocomplete({
-		source: function(request, callback) {
-			var fieldName = $(this).attr('element').attr('id');
-			var postData = {};
-			postData['entrypoint']= fieldName + '_get_with_prefix';
-			postData[fieldName] = request.term;
-			$.getJSON('xmlhttprequest.php', postData, function(data) {
-				var results = [];
-				$.each(data, function(i, value) {
-					var item = {};
-					item.label = $('<div/>').text(value).html();
-					item.value = value;
-					results.push(item);
+    $('input[type=text].typeahead').each(function() {
+        var $this = $(this);
+		$(this).typeahead({
+			minLength: 1,
+			highlight: true
+		}, {
+			source: function (query, undefined, callback) {
+				var fieldName = $this[0].id;
+				var postData = {};
+				postData['entrypoint'] = fieldName + '_get_with_prefix';
+				postData[fieldName] = query;
+				$.getJSON('xmlhttprequest.php', postData, function (data) {
+					var results = [];
+					$.each(data, function (i, value) {
+						results.push(value);
+					});
+	 				callback(results);
 				});
-				callback(results);
-			});
-		}
+			}
+		});
 	});
 
 	$('a.dynamic-filter-expander').click(function(event) {
 		event.preventDefault();
 		var fieldID = $(this).attr('id');
+		var filter_id = $(this).data('filter_id');
 		var targetID = fieldID + '_target';
 		var viewType = $('#filters_form_open input[name=view_type]').val();
 		$('#' + targetID).html('<span class="dynamic-filter-loading">' + translations['loading'] + "</span>");
+		var params = 'view_type=' + viewType + '&filter_target=' + fieldID;
+		if( undefined !== filter_id ) {
+			params += '&filter_id=' + filter_id;
+		}
 		$.ajax({
 			url: 'return_dynamic_filters.php',
-			data: 'view_type=' + viewType + '&filter_target=' + fieldID,
+			data: params,
 			cache: false,
 			context: $('#' + targetID),
 			success: function(html) {
@@ -209,14 +225,24 @@ $(document).ready( function() {
 		$('input[type=button].stopwatch_toggle').val(translations['time_tracking_stopwatch_start']);
 	});
 
-	$('input[type=text].datetime').each(function(index, element) {
-		$(this).after('&nbsp;<i class="fa fa-calendar fa-lg datetime" id="' + element.id + '_datetime_button' + '"></i>');
-		Calendar.setup({
-			inputField: element.id,
-			timeFormat: 24,
-			showsTime: true,
-			ifFormat: config['calendar_js_date_format'],
-			button: element.id + '_datetime_button'
+	$('input[type=text].datetimepicker').each(function(index, element) {
+		$(this).datetimepicker({
+			locale: $(this).data('picker-locale'),
+			format: $(this).data('picker-format'),
+			useCurrent: false,
+			icons: {
+				time: 'fa fa-clock-o',
+				date: 'fa fa-calendar',
+				up: 'fa fa-chevron-up',
+				down: 'fa fa-chevron-down',
+				previous: 'fa fa-chevron-left',
+				next: 'fa fa-chevron-right',
+				today: 'fa fa-arrows ',
+				clear: 'fa fa-trash',
+				close: 'fa fa-times'
+			}
+		}).next().on(ace.click_event, function() {
+			$(this).prev().focus();
 		});
 	});
 
@@ -253,22 +279,11 @@ $(document).ready( function() {
 
 	setBugLabel();
 
-	$(document).on('click', 'input[type=checkbox]#use_date_filters', function() {
-		if (!$(this).is(':checked')) {
-			$('div.filter-box select[name=start_year]').prop('disabled', true);
-			$('div.filter-box select[name=start_month]').prop('disabled', true);
-			$('div.filter-box select[name=start_day]').prop('disabled', true);
-			$('div.filter-box select[name=end_year]').prop('disabled', true);
-			$('div.filter-box select[name=end_month]').prop('disabled', true);
-			$('div.filter-box select[name=end_day]').prop('disabled', true);
-		} else {
-			$('div.filter-box select[name=start_year]').prop('disabled', false);
-			$('div.filter-box select[name=start_month]').prop('disabled', false);
-			$('div.filter-box select[name=start_day]').prop('disabled', false);
-			$('div.filter-box select[name=end_year]').prop('disabled', false);
-			$('div.filter-box select[name=end_month]').prop('disabled', false);
-			$('div.filter-box select[name=end_day]').prop('disabled', false);
-		}
+	/* Handle standard filter date fields */
+	$(document).on('change', '.js_switch_date_inputs_trigger', function() {
+		$(this).closest('table')
+				.find('select')
+				.prop('disabled', !$(this).prop('checked'));
 	});
 
 	/* Handle custom field of date type */
